@@ -1,7 +1,6 @@
 """A script to download the KiTS23 dataset into this repository"""
 
 import sys
-import os
 from tqdm import tqdm
 from pathlib import Path
 import urllib.request
@@ -11,12 +10,7 @@ from time import sleep
 from kits23 import TRAINING_CASE_NUMBERS
 
 
-# Use environment variable if set, otherwise use current working directory
-# This allows the dataset to be placed at the project level instead of in the submodule
-if "KITS23_DATASET_PATH" in os.environ:
-    DST_PTH = Path(os.environ["KITS23_DATASET_PATH"]).resolve()
-else:
-    DST_PTH = Path.cwd() / "dataset" / "kits23"
+DST_PTH = Path(__file__).resolve().parent.parent / "dataset"
 
 
 def get_destination(case_id: str, create: bool = False):
@@ -65,20 +59,9 @@ def download_case(case_num: int, pbar: tqdm, retry=True):
                 pass
 
 
-def download_dataset(destination: Path = None):
-    """Download the KiTS23 dataset
-
-    Args:
-        destination: Optional destination path. If None, uses DST_PTH global variable
-    """
-    global DST_PTH
-    if destination is not None:
-        DST_PTH = Path(destination).resolve()
-
+def download_dataset():
     # Make output directory if it doesn't exist already
-    DST_PTH.mkdir(parents=True, exist_ok=True)
-
-    print(f"\nDownloading KiTS23 dataset to: {DST_PTH}\n")
+    DST_PTH.mkdir(exist_ok=True)
 
     # Determine which cases still need to be downloaded
     left_to_download = []
